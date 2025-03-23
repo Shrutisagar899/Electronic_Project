@@ -1,0 +1,73 @@
+package com.bikkadIt.ElectronicStore.Controlller;
+
+import com.bikkadIt.ElectronicStore.dtos.AddItemToCartRequest;
+import com.bikkadIt.ElectronicStore.dtos.ApiResponseMessage;
+import com.bikkadIt.ElectronicStore.dtos.CartDto;
+import com.bikkadIt.ElectronicStore.service.CartService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/carts")
+public class CartController {
+    @Autowired
+    private CartService cartService;
+
+    //add item to cart
+    // add some items
+    @PostMapping("/{userId}")
+    public ResponseEntity<CartDto> addItemToCart(@PathVariable String userId, @RequestBody AddItemToCartRequest request) {
+        CartDto cartDto = cartService.addItemToCart(userId, request);
+        return new ResponseEntity<>(cartDto, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{userId}/items/{itemId}")
+    public ResponseEntity<ApiResponseMessage> removeItemFromCart(@PathVariable String userId, @PathVariable int itemId) {
+        cartService.removeItemFromCart(userId, itemId);
+        ApiResponseMessage response = ApiResponseMessage.builder()
+                .message("item is remove !!")
+                .success(true)
+                .status(HttpStatus.OK)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    //clear cart
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<ApiResponseMessage> clearCart(@PathVariable String userId) {
+        cartService.clearCart(userId);
+        ApiResponseMessage response = ApiResponseMessage.builder()
+                .message("now cart is blank !!")
+                .success(true)
+                .status(HttpStatus.OK)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<CartDto> getCartByUser(@PathVariable String userId) {
+        CartDto cartDto = cartService.getCartByUser(userId);
+        return new ResponseEntity<>(cartDto, HttpStatus.OK);
+    }
+    // get the all items
+    @GetMapping("/")
+    public ResponseEntity<List<CartDto>> getCarts() {
+        List<CartDto> cartDtos = cartService.getCarts();
+        System.out.println("my carts "+cartDtos);
+        if (!cartDtos.isEmpty()) {
+            return new ResponseEntity<>(cartDtos, HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(cartDtos, HttpStatus.NO_CONTENT);
+        }
+        }
+
+}
