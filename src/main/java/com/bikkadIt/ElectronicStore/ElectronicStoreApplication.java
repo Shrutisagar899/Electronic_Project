@@ -9,7 +9,7 @@ public class  ElectronicStoreApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ElectronicStoreApplication.class, args);
 
-		System.out.println("this is springboot application");
+		//System.out.println("this is springboot application");
 	}
 
 }
